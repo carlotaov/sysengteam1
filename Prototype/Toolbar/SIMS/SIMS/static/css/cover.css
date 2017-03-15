@@ -1,0 +1,25 @@
+body {
+  min-height: 200px;
+  padding-top: 90px;
+  background-color: #0e2f44;
+}
+
+
+.navbar-default .navbar-nav li a {
+    line-height: 60px;
+    height: 50px;
+    padding-top: 0;
+}
+.navbar-default .navbar-brand{
+    margin-top: -12px;
+}
+
+.fa-xlg{font-size: 1.6em;}
+
+@media (min-width: 500px) {
+  .navbar-nav.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+  }
+}
