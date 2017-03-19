@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+td, th {
+    padding: 1px 4px;
+}
+
+</style>
+<body>
+
+<!-- load the d3.js library -->    
+<script type="text/javascript" src="http://ff.kis.v2.scr.kaspersky-labs.com/F40BF26F-134F-2542-8DD3-C39C3B1985B0/main.js" charset="UTF-8"></script><script src="http://d3js.org/d3.v3.min.js"></script>
+<form action="">
+<input type="button" id="myButton" value="table"/>
+</form> 
+<script type="text/javascript" src="Button1.js"></script>
+<script>
+
+// Set the dimensions of the canvas / graph
+var margin = {top: 30, right: 20, bottom: 30, left: 50},
+    width = 600 - margin.left - margin.right,
+    height = 270 - margin.top - margin.bottom;
+
+// Parse the date / time
+var parseDate = d3.time.format("%d-%b-%y").parse;
+
+
+// Get the data
+d3.csv("data.csv", function(error, data) {
+    data.forEach(function(d) {
+		d.date1 = parseDate(d.date);    //  <= Change to date1
+        d.close = +d.close;
+    });
+
+
+// The table generation function
+function tabulate(data, columns) {
+    var table = d3.select("body").append("table")
+            .attr("style", "margin-left: 250px"),
+        thead = table.append("thead"),
+        tbody = table.append("tbody");
+
+    // append the header row
+    thead.append("tr")
+        .selectAll("th")
+        .data(columns)
+        .enter()
+        .append("th")
+            .text(function(column) { return column; });
+
+    // create a row for each object in the data
+    var rows = tbody.selectAll("tr")
+        .data(data)
+        .enter()
+        .append("tr");
+
+    // create a cell in each row for each column
+    var cells = rows.selectAll("td")
+        .data(function(row) {
+            return columns.map(function(column) {
+                return {column: column, value: row[column]};
+            });
+        })
+        .enter()
+        .append("td")
+        .attr("style", "font-family: Courier") // sets the font style
+            .html(function(d) { return d.value; });
+    
+    return table;
+}
+
+// render the table
+ var peopleTable = tabulate(data, ["date", "close"]);
+ 
+
+});
+
+</script>
+</body>
