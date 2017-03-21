@@ -2936,7 +2936,7 @@
 			max-width: 100%;
 			opacity: 0;
 			position: relative;
-			width: 18em;
+			width: 30em;
 		}
 
 		#menu h2 {
@@ -3701,5 +3701,17 @@
 		}
 
 	}
+#splitLeft 
+{
+    width: 50% !important;
+    float: left !important;
+}
+
+#splitRight 
+{
+    width: 50% !important;
+    float: right !important;
+}
+
 
 .datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #566EBF; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #566EBF), color-stop(1, #5067B3) );background:-moz-linear-gradient( center top, #566EBF 5%, #5067B3 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#566EBF', endColorstr='#5067B3');background-color:#566EBF; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 0px solid #566EBF; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #000000; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #566EBF; color: #000000; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: 1px solid #566EBF; }
