@@ -2,10 +2,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<script src="chart.js" type="text/javascript"></script>
+<script src="bar.js" type="text/javascript"></script>
+
+<script src="piechart.js" type="text/javascript"></script>
+    <script data-require="d3@*" data-semver="4.0.0" src="https://d3js.org/d3.v4.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css" rel="stylesheet" data-semver="3.0.1" data-require="normalize@*" />
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="assets/favicon.ico">
@@ -14,7 +21,7 @@
     <!-- Bootstrap core CSS -->
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 
-	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
@@ -27,6 +34,8 @@
     <!-- PDF viewer -->
     <script src="assets/js/pdfobject.min.js"></script>
 
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+            <script data-require="d3@*" data-semver="4.0.0" src="https://d3js.org/d3.v4.min.js"></script>
 
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
@@ -38,9 +47,9 @@
                     <li class="dropdown">
 					<a href=""class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="caret"></span></a>
 						<ul class="dropdown-menu">
-                            <li><a id="s1" draggable="true" ondragstart="drag(event)">Student grades</a></li>
-                            <li><a id="s2"href=""draggable="true" ondragstart="drag(event)">Student gender</a></li>
-                            <li><a id="s3"href=""draggable="true" ondragstart="drag(event)">Student year</a></li>
+                            <li><a id="s1"href=""draggable="true" ondragstart="drag(event, 1)">Student grades</a></li>
+                            <li><a id="s2"href=""draggable="true" ondragstart="drag(event, 2)">Student gender</a></li>
+                            <li><a id="s3"href=""draggable="true" ondragstart="drag(event, 3)">Student year</a></li>
                         </ul>
 					
 					</li>
@@ -95,36 +104,69 @@ function allowDrop(ev) {
     ev.preventDefault();
 }
 
-function drag(ev) {
+function drag(ev, id) {
     ev.dataTransfer.setData("text", ev.target.id);
-    document.getElementById("graph").style.display = "block";
+    switch(id) {
+    case 1:
+        showPie();
+        //document.getElementById("graph").src="piechart.html";
+        //document.getElementById("Chart").style.display = "block";
+        break;
+    case 2:
+	//document.getElementById("graph").src="chart.html";
+        //document.getElementById("Chart").style.display = "block";
+        showChart();
+        
+        break;
+    case 3:
+        showBar();
+        break;
+    default:
+        //code block
+}
     document.getElementById("titlu").style.display="none";
 }
 
 function drop(ev) {
     ev.preventDefault();
-    document.getElementById("graph");
+    document.getElementById("Chart");
 function hide(ev){
-    document.getElementById("graph").style.display = "none";
+    //document.getElementById("Chart").style.display = "none";
     document.getElementById("titlu").style.display="block";
 }
 }</script>
-
 
 
 </head>
 
 <body>
 
-<div class="container">
-	<div class="well">
+
+
+
+<div class="container"> 
+	<div class="well" >
 		<div class="row">
-			<div align="center" id="workspace" style="width:100%;height:500px;padding:10px;" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+
+
+    
+		<div align="center" id="workspace" style="width:100%;height:500px;padding:10px;display:block;"
+ ondrop="drop(event)" ondragover="allowDrop(event)">
 				<h1 id="titlu">Drag and drop here</h1>
-			<!--	<img  id="graph" src="assets/graph.jpg" hidden> -->
-                <iframe id="graph" align="center" frameborder="no" width="100%" height="100%" scrolling="no" src="chart.html" name="IFrameName" hidden></iframe>
-                <button class="btn btn-lg  btn-primary" id="resetButton" onclick="document.getElementById('graph').style.display = 'none';
+		<!--style="width:100%;height:500px;padding:10px;"-->	<div id="Chart" background-color:'#ff0000';">
+	
+	</div>
+
+
+    <div id="show-data"></div>
+    
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+                    <button class="btn btn-lg  btn-primary" id="resetButton" onclick="resetchart();
                 document.getElementById('titlu').style.display='block';">Reset</button>
+
+
 			</div>
 		</div>
 	</div>
@@ -138,3 +180,4 @@ function hide(ev){
 
 </body>
 </html>
+
