@@ -4,6 +4,13 @@ body {
   background-color: #0e2f44;
 }
 
+.dynamic-resize{
+    position: relative;
+    display: table; //This is important
+    overflow-y: auto;
+    width: 100%;
+}
+
 
 .navbar-default .navbar-nav li a {
     line-height: 60px;

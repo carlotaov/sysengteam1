@@ -6,5 +6,5 @@ How to run the web app?
 	pip install .
 - Then enter the following commands:
 	export FLASK_APP=SIMS
-	python python/SIMS.py
+	python SIMS/SIMS.py
 - The command line should now show the address of your local server, copy that and paste it onto your browser
