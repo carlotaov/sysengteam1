@@ -77,34 +77,9 @@
                 },
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
-                g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                radius = Math.min(width, height) / 2,
+                g = svg.append("g").attr("transform", "translate(" + width/2 + "," + height/2 + ")");
 
-            g.append("g")
-                .attr("class", "slices");
-            g.append("g")
-                .attr("class", "labels");
-            g.append("g")
-                .attr("class", "lines");
-
-            var radius = 100;
-
-            var pie = d3.pie()
-                .sort(null)
-                .value(function(d) {
-                    return d.value;
-                });
-
-            var arc = d3.arc()
-                .outerRadius(radius * 0.8)
-                .innerRadius(radius * 0.4);
-
-            var outerArc = d3.arc()
-                .innerRadius(radius * 0.9)
-                .outerRadius(radius * 0.9);
-
-            g.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-            var key = function(d){ return d.data.label; };
 
             var color = d3.scaleOrdinal()
                 .domain(attendanceMatch)
@@ -122,93 +97,33 @@
 
             function change(data) {
 
-                /* ------- PIE SLICES -------*/
-                var slice = g.select(".slices").selectAll("path.slice")
-                    .data(pie(data), key);
+                var pie = d3.pie()
+                    .sort(null)
+                    .value(function(d) { return d.value; });
 
-                slice.enter()
-                    .insert("path")
-                    .style("fill", function(d) { return color(d.data.label); })
-                    .attr("class", "slice");
+                var path = d3.arc()
+                    .outerRadius(radius - 10)
+                    .innerRadius(0);
 
-                slice
-                    .transition().duration(1000)
-                    .attrTween("d", function(d) {
-                        this._current = this._current || d;
-                        var interpolate = d3.interpolate(this._current, d);
-                        this._current = interpolate(0);
-                        return function(t) {
-                            return arc(interpolate(t));
-                        };
-                    })
+                var label = d3.arc()
+                    .outerRadius(radius - 40)
+                    .innerRadius(radius - 40);
 
-                slice.exit()
-                    .remove();
 
-                /* ------- TEXT LABELS -------*/
+                  var arc = g.selectAll(".arc")
+                    .data(pie(data))
+                    .enter().append("g")
+                      .attr("class", "arc");
 
-                var text = g.select(".labels").selectAll("text")
-                    .data(pie(data), key);
+                  arc.append("path")
+                      .attr("d", path)
+                      .attr("fill", function(d,i) { return color(d.data.label); });
 
-                text.enter()
-                    .append("text")
-                    .attr("dy", ".35em")
-                    .text(function(d) {
-                        return d.data.label;
-                    });
+                  arc.append("text")
+                      .attr("transform", function(d) { return "translate(" + label.centroid(d) + ")"; })
+                      .attr("dy", "0.35em")
+                      .text(function(d,i) { return d.data.label; });
 
-                function midAngle(d){
-                    return d.startAngle + (d.endAngle - d.startAngle)/2;
-                }
-
-                text.transition().duration(1000)
-                    .attrTween("transform", function(d) {
-                        this._current = this._current || d;
-                        var interpolate = d3.interpolate(this._current, d);
-                        this._current = interpolate(0);
-                        return function(t) {
-                            var d2 = interpolate(t);
-                            var pos = outerArc.centroid(d2);
-                            pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
-                            return "translate("+ pos +")";
-                        };
-                    })
-                    .styleTween("text-anchor", function(d){
-                        this._current = this._current || d;
-                        var interpolate = d3.interpolate(this._current, d);
-                        this._current = interpolate(0);
-                        return function(t) {
-                            var d2 = interpolate(t);
-                            return midAngle(d2) < Math.PI ? "start":"end";
-                        };
-                    });
-
-                text.exit()
-                    .remove();
-
-                /* ------- SLICE TO TEXT POLYLINES -------*/
-
-                var polyline = g.select(".lines").selectAll("polyline")
-                    .data(pie(data), key);
-
-                polyline.enter()
-                    .append("polyline");
-
-                polyline.transition().duration(1000)
-                    .attrTween("points", function(d){
-                        this._current = this._current || d;
-                        var interpolate = d3.interpolate(this._current, d);
-                        this._current = interpolate(0);
-                        return function(t) {
-                            var d2 = interpolate(t);
-                            var pos = outerArc.centroid(d2);
-                            pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-                            return [arc.centroid(d2), outerArc.centroid(d2), pos];
-                        };
-                    });
-
-                polyline.exit()
-                    .remove();
             };
         }
         function getData(callback) {
@@ -285,7 +200,6 @@
                 callback();
             });
         }
-
         function drawData() {
             // The xz array has m elements, representing the x-values shared by all series.
             // The yz array has n elements, representing the y-values of each of the n series.
@@ -376,16 +290,19 @@
         }
 
         add_grades = function() {
+            $("#svg1").empty();
             gradesAdded = true;
             getData(drawData);
         };
 
         add_attendance = function() {
+            $("#svg2").empty();
             attendanceAdded = true;
             getData2(drawData2);
         };
 
         add_gender = function() {
+            $("#svg1").empty();
             genderAdded = true;
             getData(drawData);
         };
@@ -409,7 +326,7 @@
 
     function drop(ev) {
         ev.preventDefault();
-        $("svg").empty();
+
         $("#input").show();
         $("#reset").show();
         var who = event.dataTransfer.getData("Text");
