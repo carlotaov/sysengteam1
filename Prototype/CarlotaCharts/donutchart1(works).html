@@ -61,6 +61,10 @@ var path = svg.selectAll('path')
   .attr('fill', function(d, i) {
     return color(d.data.Name);
   });
+  
+  function dragged(d) {
+               d3.select(this).attr("transform","translate("+d3.event.x+","+d3.event.y+")");
+                         }
 </script>
 
   </body>

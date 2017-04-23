@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style> /* set the CSS */
+<style>
 
 body { font: 12px Arial;}
 
@@ -19,7 +19,8 @@ path {
 }
 
 td, th {
-    padding: 1px 4px;
+    padding: 5px 10px;
+	border: 1px black solid;
 }
 
 </style>
@@ -28,7 +29,7 @@ td, th {
 <!-- load the d3.js library -->    
 <script type="text/javascript" src="http://ff.kis.v2.scr.kaspersky-labs.com/F40BF26F-134F-2542-8DD3-C39C3B1985B0/main.js" charset="UTF-8"></script><script src="http://d3js.org/d3.v3.min.js"></script>
 <form action="">
-<input type="button" id="myButton" value="table"/>
+<input type="button" id="myButton" value="Graph"/>
 </form> 
 <script type="text/javascript" src="Button1.js"></script>
 <script>
@@ -38,22 +39,17 @@ var margin = {top: 30, right: 20, bottom: 30, left: 50},
     width = 600 - margin.left - margin.right,
     height = 270 - margin.top - margin.bottom;
 
-// Parse the date / time
-var parseDate = d3.time.format("%d-%b-%y").parse;
-
-
 // Get the data
 d3.csv("data.csv", function(error, data) {
-    data.forEach(function(d) {
-		d.date1 = parseDate(d.date);    //  <= Change to date1
-        d.close = +d.close;
-    });
+
 
 
 // The table generation function
 function tabulate(data, columns) {
-    var table = d3.select("body").append("table")
-            .attr("style", "margin-left: 250px"),
+ var table = d3.select("body").append("table")
+            .attr("style", "margin-left: 200px")
+            .style("border-collapse", "collapse")
+            .style("border", "3px black solid"),
         thead = table.append("thead"),
         tbody = table.append("tbody");
 
@@ -66,13 +62,13 @@ function tabulate(data, columns) {
             .text(function(column) { return column; });
 
     // create a row for each object in the data
-    var rows = tbody.selectAll("tr")
+    var row = tbody.selectAll("tr")
         .data(data)
         .enter()
         .append("tr");
 
     // create a cell in each row for each column
-    var cells = rows.selectAll("td")
+    var box = row.selectAll("td")
         .data(function(row) {
             return columns.map(function(column) {
                 return {column: column, value: row[column]};
@@ -85,10 +81,14 @@ function tabulate(data, columns) {
     
     return table;
 }
-
 // render the table
- var peopleTable = tabulate(data, ["date", "close"]);
- 
+ var dynamicTable = tabulate(data, d3.keys(data[0]));
+
+//capitalize keys
+dynamicTable.selectAll("thead th")
+        .text(function(column) {
+                return column.charAt(0).toUpperCase() + column.substr(1);
+        }); 
 
 });
 
