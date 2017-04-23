@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<html>
+<head>
+</head>
+<body>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.0.min.js"></script>
+<!-- load the d3.js library -->    
+<script type="text/javascript" src="http://ff.kis.v2.scr.kaspersky-labs.com/F40BF26F-134F-2542-8DD3-C39C3B1985B0/main.js" charset="UTF-8"></script><script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+d3.json("data.json", function (error,data) {
+var Data = d3.keys(data[0]);
+//var hagu = d3.keys(Data)
+document.write(Data);
+
+/*var json = d3.json('data.json');
+var parsed = JSON.parse(json);
+var arr = [];
+for(var x in parsed){
+  arr.push(parsed[x]);
+}
+document.write(json);*/
+});
+
+</script>
+</body>
+</html>
