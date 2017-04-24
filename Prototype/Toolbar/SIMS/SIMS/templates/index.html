@@ -19,29 +19,32 @@
     {% endif %}
     {% endwith %}
     <div class="well dynamic-resize">
-        <div class="row text-center" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="row text-center" ondrop="drop(event)"  style="min-height: px;" ondragover="allowDrop(event)">
             <a href="#" id="reset" hidden>Reset</a>
             <form id="input" hidden>
               <label><input type="radio" name="mode" value="grouped"> Grouped</label>
               <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
             </form>
-            <svg id="svg1" width="960" height="500"></svg>
-            <svg id="svg2" width="960" height="500"></svg>
+            <h2 id="title">Drop data here</h2>
+            <svg id="svg1" width="960" height="500" hidden></svg>
+            <svg id="svg2" width="960" height="500" hidden></svg>
             </div>
         </div>
     </div>
 </div>
 <script>
-    var add_grades, add_gender, add_attendance;
+    var add_grades, add_gender, add_attendance, add_year;
     var gradesAdded = false,
         attendanceAdded = false,
+        yearAdded = false,
         genderAdded = false;
-    var currentData;
+    var currentData, currentData2;
     var gradeMatch = ["A*", "A", "B", "C", "D", "E", "U"];
     var attendanceMatch =[">80%", "60%-80%","40%-60%", "<40%"];
     var genderMatch = ["Male", "Female"];
+    var yearMatch=["Year 1","Year 2", "Year 3", "Year 4"];
     var xz, yz;
-    var attendanceData;
+    var yearData;
     var n, // The number of series.
         m; // The number of values per series.
     document.addEventListener("DOMContentLoaded", function(event) {
@@ -49,19 +52,16 @@
             ev.dataTransfer.setData("text", ev.target.id);
         }
 
+        $.ajaxSetup({ cache: false });
+
         function getData2(callback){
             $.getJSON("{{ url_for('static', filename='students.json') }}", function(data) {
                 currentData = [0,0,0,0];
                 for (var i in data) {
-                    var index=0;
-                    if (data[i]["attendance"]>=80) index=0;
-                    else if (data[i]["attendance"]>=60) index=1;
-                    else if (data[i]["attendance"]>=40) index=2;
-                    else index=3;
-                    currentData[index]++;
+                    currentData[data[i]["year"]-1]++;
                 }
                 console.log(currentData);
-                attendanceData = currentData;
+                yearData = currentData;
             }).done(function() {
                 callback();
             });
@@ -82,13 +82,13 @@
 
 
             var color = d3.scaleOrdinal()
-                .domain(attendanceMatch)
+                .domain(yearMatch)
                 .range(d3.schemeCategory10);
 
             function getData (){
                 var labels = color.domain();
                 return labels.map(function(label,i){
-                    return { label: label, value: attendanceData[i] }
+                    return { label: label, value: yearData[i] }
                 });
             }
 
@@ -128,72 +128,87 @@
         }
         function getData(callback) {
             $.getJSON("{{ url_for('static', filename='students.json') }}", function(data) {
-                currentData = [{
-                        "male": 0,
-                        "female": 0
-                    },
-                    {
-                        "male": 0,
-                        "female": 0
-                    },
-                    {
-                        "male": 0,
-                        "female": 0
-                    },
-                    {
-                        "male": 0,
-                        "female": 0
-                    },
-                    {
-                        "male": 0,
-                        "female": 0
-                    },
-                    {
-                        "male": 0,
-                        "female": 0
-                    },
-                    {
-                        "male": 0,
-                        "female": 0
-                    }
-                ];
+                currentData = [{"male": 0, "female": 0},
+                    {"male": 0, "female": 0},
+                    {"male": 0, "female": 0},
+                    {"male": 0, "female": 0},
+                    {"male": 0, "female": 0},
+                    {"male": 0, "female": 0},
+                    {"male": 0, "female": 0}];
+
                 for (var i in data) {
-                    var index = gradeMatch.indexOf(data[i]["grade"]);
+                    var index;
+                    if (gradesAdded)  index = gradeMatch.indexOf(data[i]["grade"]);
+                    else index = data[i]["year"] - 1;
                     currentData[index][data[i]["gender"]]++;
                 }
                 console.log(currentData);
                 var totalMale = 0,
-                    totalFemale = 0;
+                        totalFemale = 0;
                 for (var i in currentData) {
                     totalMale += currentData[i]["male"];
                     totalFemale += currentData[i]["female"];
                 }
                 //process data
-                var processedData;
-                if (gradesAdded) xz = gradeMatch;
-                else xz = genderMatch;
-                m = xz.length;
-                n = 1;
+
                 if (gradesAdded && genderAdded) {
-                    n = 2;
+                    // Gender and Grades
+                    xz = gradeMatch;
                     yz = [
                         [],
                         []
                     ];
+                    n = 2;
+                    m = xz.length;
                     for (var i in currentData) {
                         yz[0].push(currentData[i]["male"]);
                         yz[1].push(currentData[i]["female"]);
                     }
+                } else if (genderAdded && attendanceAdded) {
+                    // Gender and Attendance
+                    xz = attendanceMatch;
+                    yz = [
+                        [],
+                        []
+                    ];
+                    n = 2;
+                    m = xz.length;
+                    for (var i in currentData)
+                        if (i<4)
+                        {
+                            yz[0].push(currentData[i]["male"]);
+                            yz[1].push(currentData[i]["female"]);
+                        }
                 } else if (genderAdded) {
+                    // Gender
+                    xz = genderMatch;
                     yz = [
                         [totalMale, totalFemale]
                     ];
-                } else {
+                    n = 1;
+                    m = xz.length;
+                } else if (gradesAdded) {
+                    // Grades
+                    xz = gradeMatch;
                     yz = [
                         []
                     ];
+                    n = 1;
+                    m = xz.length;
                     for (var i in currentData) {
                         yz[0].push(currentData[i]["male"] + currentData[i]["female"]);
+                    }
+                } else if (attendanceAdded)
+                {
+                    // Attendance
+                    xz = attendanceMatch;
+                    yz = [
+                        []
+                    ];
+                    n = 1;
+                    m = xz.length;
+                    for (var i in currentData) {
+                        if (i<4) yz[0].push(currentData[i]["male"] + currentData[i]["female"]);
                     }
                 }
             }).done(function() {
@@ -291,22 +306,37 @@
 
         add_grades = function() {
             $("#svg1").empty();
+            $("#svg1").show();
             gradesAdded = true;
+            attendanceAdded = false;
             getData(drawData);
         };
 
-        add_attendance = function() {
+        add_year = function() {
             $("#svg2").empty();
-            attendanceAdded = true;
+            $("#svg2").show();
+            yearAdded = true;
             getData2(drawData2);
+        };
+
+        add_attendance = function() {
+            $("#svg1").empty();
+            $("#svg1").show();
+            attendanceAdded = true;
+            gradesAdded = false;
+            getData(drawData);
         };
 
         add_gender = function() {
             $("#svg1").empty();
+            $("#svg1").show();
             genderAdded = true;
             getData(drawData);
         };
         $('#reset').click(function() {
+            $("#title").show();
+            $("#svg1").hide();
+            $("#svg2").hide();
             $("#input").hide();
             $("#reset").hide();
             $("svg").empty();
@@ -326,7 +356,7 @@
 
     function drop(ev) {
         ev.preventDefault();
-
+        $("#title").hide();
         $("#input").show();
         $("#reset").show();
         var who = event.dataTransfer.getData("Text");
@@ -335,6 +365,8 @@
         if (who == "stGender") add_gender();
         else
         if (who == "stAttendance") add_attendance();
+        else
+        if (who == "stYear") add_year();
     }
 </script>
 {% endblock %}
