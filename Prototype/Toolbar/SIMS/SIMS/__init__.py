@@ -1,2 +1,0 @@
-from .SIMS import app
-
