@@ -9,11 +9,6 @@
     <meta name="author" content="">
     <link rel="icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     <link rel="shortcut_icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
-    <script src="chart.js" type="text/javascript"></script>
-    <script src="bar.js" type="text/javascript"></script>
-    <script src="venn1.js" type="text/javascript"></script>
-    <script src="piechart.js" type="text/javascript"></script>
-    <script data-require="d3@*" data-semver="4.0.0" src="https://d3js.org/d3.v4.min.js"></script>
 
     <title> SIMS | {% block title %}{% endblock %} </title>
 
@@ -26,6 +21,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='css/cover.css') }}" rel="stylesheet">
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -48,9 +44,9 @@
                             <i class="fa fa-address-book fa-xlg" aria-hidden="true"></i><span class="caret"></span>
                         </a>
 						<ul class="dropdown-menu">
-                            <li><a id="s1"href=""draggable="true" ondragstart="drag(event, 1)">Student grades</a></li>
-                            <li><a id="s2"href=""draggable="true" ondragstart="drag(event, 2)">Student gender</a></li>
-                            <li><a id="s3"href=""draggable="true" ondragstart="drag(event, 3)">Student year</a></li>
+                            <li><a id="stGrades" href="" draggable="true" class="drag">Student grades</a></li>
+                            <li><a id="stGender" href="" draggable="true" class="drag">Student gender</a></li>
+                            <li><a id="stYear" href="" draggable="true" class="drag">Student year</a></li>
                             <li><a id="stAttendance" href="" draggable="true" class="drag">Student attendance</a></li>
                         </ul>
 
@@ -148,39 +144,6 @@
         </div>
     </nav>
 
-<script>
-
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev, id) {
-    ev.dataTransfer.setData("text", ev.target.id);
-    switch(id) {
-    case 1:
-        showPie();
-        break;
-    case 2:
-        showChart();        
-        break;
-    case 3:
-        showBar();
-        break;
-    default:
-        //code block
-}
-    document.getElementById("titlu").style.display="none";
-}
-
-function drop(ev) {
-    ev.preventDefault();
-    document.getElementById("Chart");
-function hide(ev){
-    //document.getElementById("Chart").style.display = "none";
-    document.getElementById("titlu").style.display="block";
-}
-}</script>
-
 
 
 </head>
@@ -188,40 +151,7 @@ function hide(ev){
 
 <body>
 
-{% block content %}
-<div class="container"> 
-    <div class="well" >
-        <div class="row">
-
-
-
-    
-        <div align="center" id="workspace" style="width:100%;height:500px;padding:10px;display:block;"
- ondrop="drop(event)" ondragover="allowDrop(event)">
-                <h1 id="titlu">Drag and drop here</h1>
-
-<div id="Chart">
-    
-    </div>
-
-     <div id="show-data"></div>
-    
-
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-                    <button class="btn btn-lg  btn-primary" id="resetButton" onclick="resetchart();
-                document.getElementById('titlu').style.display='block';">Reset</button>
-<button class="btn btn-lg  btn-primary" id="toggleButton" onclick="toggle();
-                document.getElementById('titlu').style.display='block';">Merge</button>
-
-
-
-            </div>
-        </div>
-    </div>
-
-
-</div>
-{% endblock %}
+{% block content %}{% endblock %}
 
 </body>
 
