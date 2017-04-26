@@ -8,7 +8,7 @@ SIMS Discover is a data visualisation web application powered by D3.js.
 
 # Setup
 1. Install version 2.6 or above of Python (does not support Python 3)
-2. Use the terminal to traverse to the folder where you have extracted the application
+2. Use the terminal to traverse to the folder where you have extracted the application (`Prototype/Main\ Application/SIMS`)
 3. Install flask `pip install flask`
 4. Set the FLASK_APP environment:
     1. Linux/OS X: `export FLASK_APP = SIMS`
